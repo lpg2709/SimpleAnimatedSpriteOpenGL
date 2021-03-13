@@ -1,5 +1,5 @@
 CFLAGS = -Wall
-LFLAGS = -lGL -lGLU -lglut
+LFLAGS = -lGL -lGLU -lglut -lm
 C_SOURCES = $(wildcard ./*c)
 OBJ = $(C_SOURCES:.c=.o)
 CC = gcc
