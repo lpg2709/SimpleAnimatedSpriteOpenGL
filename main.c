@@ -6,7 +6,7 @@
 
 #include "stb_image.h"
 
-unsigned int textureData;
+unsigned int texturesData[10];
 unsigned int oneSpriteSize = 32;
 unsigned int total_image_row;
 unsigned int total_image_col;
@@ -15,6 +15,7 @@ void renderScene(){
 	glClear(GL_COLOR_BUFFER_BIT);
 
 	float quad_size = 1.0;
+	glBindTexture(GL_TEXTURE_2D, texturesData[0]);
 	glBegin(GL_QUADS);
 		glTexCoord2f(0.0, 0.0); 
 		glVertex2f(-quad_size, -quad_size);
@@ -28,6 +29,7 @@ void renderScene(){
 		glTexCoord2f(0.0, 1.0); 
 		glVertex2f(-quad_size,  quad_size);
 	glEnd();
+
 
 	glutSwapBuffers();
 }
@@ -60,6 +62,7 @@ void setup(){
 	glClearColor(0.2, 0.2, 0.4, 1.0);
 
 
+
 	int width, height, nrChanels;
 	stbi_set_flip_vertically_on_load(1);
 	unsigned char *sprite = stbi_load("./rogue_srpite.png", &width, &height, &nrChanels, 0);
@@ -73,6 +76,9 @@ void setup(){
 
 	printf("Total row: %d\n", total_image_row);
 	printf("Total col: %d\n", total_image_col);
+
+	glGenTextures(10, texturesData);
+	glBindTexture(GL_TEXTURE_2D, texturesData[0]);
 
 	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, sprite);
 	stbi_image_free(sprite);
@@ -88,6 +94,11 @@ void setup(){
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA); // Change blend function
 }
 
+void timerFunction(int val){
+	glutPostRedisplay();
+	glutTimerFunc(33, timerFunction, 1);
+}
+
 int main(int argc, char **argv){
 
 	glutInit(&argc, argv);
@@ -96,6 +107,7 @@ int main(int argc, char **argv){
 	glutCreateWindow("Animated Sprit");
 	glutDisplayFunc(renderScene);
 	glutReshapeFunc(framebuffer_size_callback);
+	glutTimerFunc(10, timerFunction, 1);
 
 	setup();
 
