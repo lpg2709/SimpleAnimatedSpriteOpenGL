@@ -7,26 +7,38 @@
 #include "stb_image.h"
 
 unsigned int texturesData[10];
+float sprite_width = 32.0f, sprite_height = 32.0f;
+int width, height, nrChanels;
 unsigned int oneSpriteSize = 32;
 unsigned int total_image_row;
 unsigned int total_image_col;
+float x = 0.0f, y = 4.0f;
+float c_time = 0;
 
 void renderScene(){
 	glClear(GL_COLOR_BUFFER_BIT);
+	c_time++;
+	if(c_time > 5){
+		c_time = 0;
+		x++;
+		if(x == 9){
+			x = 0;
+		}
+	}
 
 	float quad_size = 1.0;
 	glBindTexture(GL_TEXTURE_2D, texturesData[0]);
 	glBegin(GL_QUADS);
-		glTexCoord2f(0.0, 0.0); 
+		glTexCoord2f((x*sprite_width)/width, (y*sprite_height)/height);
 		glVertex2f(-quad_size, -quad_size);
 
-		glTexCoord2f(1.0, 0.0); 
+		glTexCoord2f(((x + 1.0f)*sprite_width)/width, (y*sprite_height)/height);
 		glVertex2f( quad_size, -quad_size);
 
-		glTexCoord2f(1.0, 1.0); 
+		glTexCoord2f(((x + 1.0f)*sprite_width)/width, ((y+1.0f)*sprite_height)/height);
 		glVertex2f( quad_size,  quad_size);
 
-		glTexCoord2f(0.0, 1.0); 
+		glTexCoord2f((x*sprite_width)/width, ((y+1.0f)*sprite_height)/height);
 		glVertex2f(-quad_size,  quad_size);
 	glEnd();
 
@@ -61,19 +73,18 @@ void framebuffer_size_callback(int w, int h){
 void setup(){
 	glClearColor(0.2, 0.2, 0.4, 1.0);
 
-
-
-	int width, height, nrChanels;
 	stbi_set_flip_vertically_on_load(1);
 	unsigned char *sprite = stbi_load("./rogue_srpite.png", &width, &height, &nrChanels, 0);
 	if(!sprite){
-		printf("Erro ao abrir ./rogue_srpite.png");
+		printf("Fail to open ./rogue_srpite.png");
 		exit(1);
 	}
 
 	total_image_row = (unsigned int) width/ (unsigned int) oneSpriteSize;
 	total_image_col = (unsigned int) height/ (unsigned int) oneSpriteSize;
 
+	printf("Sprite width: %d\n", width);
+	printf("Sprite height: %d\n", height);
 	printf("Total row: %d\n", total_image_row);
 	printf("Total col: %d\n", total_image_col);
 
@@ -96,7 +107,7 @@ void setup(){
 
 void timerFunction(int val){
 	glutPostRedisplay();
-	glutTimerFunc(33, timerFunction, 1);
+	glutTimerFunc(33, timerFunction, 1); // ~= 60 fps
 }
 
 int main(int argc, char **argv){
@@ -112,6 +123,6 @@ int main(int argc, char **argv){
 	setup();
 
 	glutMainLoop();
-	
+
 	return 0;
 }
