@@ -12,8 +12,13 @@ int width, height, nrChanels;
 unsigned int oneSpriteSize = 32;
 unsigned int total_image_row;
 unsigned int total_image_col;
-float x = 0.0f, y = 4.0f;
+float x = 0.0f, y = 0.0f;
 float c_time = 0;
+
+void print_current_sprite_animation(){
+	printf("\rCurrent index: %d", (int) y);
+	fflush(stdout);
+}
 
 void renderScene(){
 	glClear(GL_COLOR_BUFFER_BIT);
@@ -21,10 +26,12 @@ void renderScene(){
 	if(c_time > 5){
 		c_time = 0;
 		x++;
-		if(x == 9){
+		if(x == total_image_col - 1){
 			x = 0;
 		}
 	}
+
+	print_current_sprite_animation();
 
 	float quad_size = 1.0;
 	glBindTexture(GL_TEXTURE_2D, texturesData[0]);
@@ -80,8 +87,8 @@ void setup(){
 		exit(1);
 	}
 
-	total_image_row = (unsigned int) width/ (unsigned int) oneSpriteSize;
-	total_image_col = (unsigned int) height/ (unsigned int) oneSpriteSize;
+	total_image_col = (unsigned int) width/ (unsigned int) oneSpriteSize;
+	total_image_row = (unsigned int) height/ (unsigned int) oneSpriteSize;
 
 	printf("Sprite width: %d\n", width);
 	printf("Sprite height: %d\n", height);
@@ -110,6 +117,24 @@ void timerFunction(int val){
 	glutTimerFunc(33, timerFunction, 1); // ~= 60 fps
 }
 
+void updateY(int add){
+	y += add;
+	x = 0; // First frame
+	if( y < 0) y = 0;
+	if( y > total_image_row - 1) y = total_image_row - 1;
+}
+
+void keyboard(unsigned char key, int x, int y){
+	switch (key) {
+		case 'k':
+			updateY(1);
+			break;
+		case 'j':
+			updateY(-1);
+			break;
+	}
+}
+
 int main(int argc, char **argv){
 
 	glutInit(&argc, argv);
@@ -117,6 +142,7 @@ int main(int argc, char **argv){
 	glutInitWindowSize(600, 600);
 	glutCreateWindow("Animated Sprit");
 	glutDisplayFunc(renderScene);
+	glutKeyboardFunc(keyboard);
 	glutReshapeFunc(framebuffer_size_callback);
 	glutTimerFunc(10, timerFunction, 1);
 
