@@ -1,6 +1,11 @@
 # Simple sprite animation with legacy OpenGL
 
-Simple exemplo of sprite animation with legacy OpenGL
+Simple example of sprite animation with legacy OpenGL
+
+# Use
+
+After compile, run the executable ./AnimatedSprit
+To change the animation, use ```j``` to decrease the index and ``` k``` to increase it.
 
 ## Dependences
 
